@@ -2,7 +2,7 @@
 * @Description:
 * @Author: Sauron
 * @Date: 2022-06-25 17:05:20
- * @LastEditTime: 2022-06-26 19:08:05
+ * @LastEditTime: 2022-06-26 21:30:31
  * @LastEditors: Sauron
 */
 package main
@@ -23,7 +23,7 @@ import (
 	"github.com/wutianze/nats.go"
 )
 
-var host_port = flag.String("socket listen address", ":8000", "listen on which port")
+var host_port = flag.String("address", ":8000", "listen address, connect address(debug)")
 var nats_address = flag.String("nats", "nats://39.101.140.145:4222", "address of nats server")
 var link_num = flag.Int("num", 3, "number of clients(for server) or index of the client(for client)")
 var debug = flag.Bool("debug", false, "run as a socket client")
@@ -113,6 +113,7 @@ func main() {
 			defer socket_conn.Close()
 			if err2 != nil {
 				fmt.Println(err2)
+				i--
 				continue
 			}
 			go func() {
@@ -133,11 +134,12 @@ func main() {
 					if string(data) == "exit" {
 						return
 					}
+					fmt.Printf("Socket Received a message: %s\n", string(data))
 					nc.IPublish("gtcontrol_"+strconv.Itoa(i), data)
 				}
 			}()
 			_, err3 := nc.ISubscribe("gtlog_"+strconv.Itoa(i), func(m *nats.Msg) {
-				fmt.Printf("Received a message: %s\n", string(m.Data))
+				fmt.Printf("Nats Received a message: %s\n", string(m.Data))
 				sendMsg(&socket_conn, &m.Data)
 			})
 			if err3 != nil {
@@ -146,6 +148,7 @@ func main() {
 		}
 
 	case *name == "client":
+		fmt.Println("client")
 		socket_conn, err2 := listener.Accept()
 		defer socket_conn.Close()
 		if err2 != nil {
@@ -170,17 +173,17 @@ func main() {
 				if string(data) == "exit" {
 					return
 				}
+				fmt.Printf("Socket Received a message: %s\n", string(data))
 				nc.IPublish("gtlog_"+strconv.Itoa(*link_num), data)
 			}
 		}()
 		_, err3 := nc.ISubscribe("gtcontrol_"+strconv.Itoa(*link_num), func(m *nats.Msg) {
-			fmt.Printf("Received a message: %s\n", string(m.Data))
+			fmt.Printf("NATS Received a message: %s\n", string(m.Data))
 			sendMsg(&socket_conn, &m.Data)
 		})
 		if err3 != nil {
 			fmt.Println(err3)
 		}
-		fmt.Println("cli0")
 	}
 	for {
 	}
