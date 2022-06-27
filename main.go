@@ -27,8 +27,6 @@ var host_port = flag.String("address", ":8000", "listen address, connect address
 var nats_address = flag.String("nats", "nats://39.101.140.145:4222", "address of nats server")
 var link_num = flag.Int("num", 3, "number of clients(for server) or index of the client(for client)")
 var debug = flag.Bool("debug", false, "run as a socket client")
-
-// name: server, cli0, cli1, cli2
 var name = flag.String("name", "", "who am I")
 
 func sendMsg(n *net.Conn, b *[]byte) {
