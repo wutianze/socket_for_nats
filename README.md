@@ -1,7 +1,7 @@
 # socket_for_nats
 本项目基于nats实现，用于兼容上一版socket+fastdds的总线方案。因为现阶段信息高铁总线系统已舍弃socket+方案，所以本项目仅做兼容旧版用，新项目请直接调用最新总线接口。
 # 环境部署
-1. 下载go（根据部署机器替换包）`wget https://go.dev/dl/go1.18.3.linux-arm64.tar.gz`
+1. 下载go（根据部署机器替换包）`wget https://go.dev/dl/go1.18.3.linux-arm64.tar.gz`，如果是x86机器，换成go1.18.3.linux-amd64.tar.gz
 2. 解压并安装`sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go1.18.3.linux-arm64.tar.gz`
 3. 添加路径，在$HOME/.profile中添加`export PATH=$PATH:/usr/local/go/bin`并`source ~/.profile`
 4. 检查，运行`go version`
