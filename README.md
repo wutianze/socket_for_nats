@@ -3,7 +3,7 @@
 # 环境部署
 1. 下载go（根据部署机器替换包）`wget https://go.dev/dl/go1.18.3.linux-arm64.tar.gz`
 2. 解压并安装`sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go1.18.3.linux-amd64.tar.gz`
-3. 添加路径，在$HOME/.profile 或 /etc/profile中添加`export PATH=$PATH:/usr/local/go/bin`
+3. 添加路径，在$HOME/.profile中添加`export PATH=$PATH:/usr/local/go/bin`并`source ~/.profile`
 4. 检查，运行`go version`
 5. 下载本项目`git clone https://github.com/wutianze/socket_for_nats.git`
 6. 进入本项目目录并运行`go run .`
