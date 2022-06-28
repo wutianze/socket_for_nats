@@ -30,4 +30,4 @@
 ## 其他
 socket server在收到"exit"消息后会退出。其他时候直接ctrl-c信号退出。
 # 直接使用总线接口
-见总线接口说明文档。项目地址github.com/wutianze/nats.go。直接使用总线接口暂不支持使用request-respond接口和其他使用socket的用户进行交互。
+见总线接口说明文档，安装：`go get github.com/wutianze/nats.go@main`。直接使用总线接口暂不支持使用request-respond接口和其他使用socket的用户进行交互。
