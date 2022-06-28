@@ -8,7 +8,7 @@
 5. 下载本项目`git clone https://github.com/wutianze/socket_for_nats.git`
 6. 进入本项目目录并运行`go run .` （如果国内网络限制下载失败，可以使用go代理，`go env -w GO111MODULE=on && go env -w GOPROXY=https://goproxy.cn`）
 ## 容器
-除了上面的直接部署，也可选择容器部署，amd64镜像：sauronwu/socket_nats_amd64。容器运行示例`sudo docker run -p 8000:8000 -w /home/socket_for_nats/ sauronwu/socket_nats_amd64:v0.1 go run . --name="server" --num=1`
+除了上面的直接部署，也可选择容器部署，amd64镜像：sauronwu/socket_nats_amd64。容器运行示例`sudo docker run -p 8000:8000 -dw /home/socket_for_nats/ sauronwu/socket_nats_amd64:v0.1 git pull && go run . --name="server" --num=1`（一般情况下可以不用git pull）
 # 参数指定
 `--address="127.0.0.1:8000"`，socket的监听地址，默认为":8000"
 `--nats="nats://39.101.140.145:4222"`，nats服务器地址，默认为我们部署在阿里云上的地址，不需要修改
