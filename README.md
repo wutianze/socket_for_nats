@@ -6,7 +6,7 @@
 3. 添加路径，在$HOME/.profile中添加`export PATH=$PATH:/usr/local/go/bin`并`source ~/.profile`
 4. 检查，运行`go version`
 5. 下载本项目`git clone https://github.com/wutianze/socket_for_nats.git`
-6. 进入本项目目录并运行`go run .`
+6. 进入本项目目录并运行`go run .` （如果国内网络限制下载失败，可以使用go代理，`go env -w GO111MODULE=on && go env -w GOPROXY=https://goproxy.cn`）
 # 参数指定
 `--address="127.0.0.1:8000"`，socket的监听地址，默认为":8000"
 `--nats="nats://39.101.140.145:4222"`，nats服务器地址，默认为我们部署在阿里云上的地址，不需要修改
