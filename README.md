@@ -7,6 +7,8 @@
 4. 检查，运行`go version`
 5. 下载本项目`git clone https://github.com/wutianze/socket_for_nats.git`
 6. 进入本项目目录并运行`go run .` （如果国内网络限制下载失败，可以使用go代理，`go env -w GO111MODULE=on && go env -w GOPROXY=https://goproxy.cn`）
+## 容器
+除了上面的直接部署，也可选择容器部署，amd64镜像：sauronwu/socket_nats_amd64。容器运行示例`sudo docker run -p 8000:8000 -w /home/socket_for_nats/ sauronwu/socket_nats_amd64:v0.1 go run . --name="server" --num=1`
 # 参数指定
 `--address="127.0.0.1:8000"`，socket的监听地址，默认为":8000"
 `--nats="nats://39.101.140.145:4222"`，nats服务器地址，默认为我们部署在阿里云上的地址，不需要修改
@@ -15,9 +17,9 @@
 `--debug=true`，默认为false，该选项用于开发者调试，为true时本次运行会作为一个socket client尝试连接address指定的socket sever，会等待来自socket server的消息，并发送几条消息给socket server。
 # 运行样例
 ## 综合管控
-`go run . --name="server", --num=3`
+`go run . --name="server" --num=3`
 ## 接入网、智能网、高通量
-`go run . --name="client", --num=0`
+`go run . --name="client" --num=0`
 ## 开发者debug
 `go run . --debug=true --address="127.0.0.1:8000"`
 # 连接逻辑解析
@@ -27,3 +29,5 @@
 综合管控为每个接入的部门启动一个socket client，都连接本项目。不同部门上报的消息会由总线发送到本项目，本项目会将消息转发到对应的socket连接上。总控下达控制指令通过特定的socket连接发到本项目，本项目转发给总线，最终到达对应的部门。
 ## 其他
 socket server在收到"exit"消息后会退出。其他时候直接ctrl-c信号退出。
+# 直接使用总线接口
+见总线接口说明文档。项目地址github.com/wutianze/nats.go。直接使用总线接口暂不支持使用request-respond接口和其他使用socket的用户进行交互。
