@@ -115,6 +115,7 @@ func main() {
 				continue
 			}
 			go func() {
+				client_index := i
 				for {
 					bufSize := make([]byte, 4)
 					_, err0 := io.ReadFull(socket_conn, bufSize)
@@ -133,7 +134,7 @@ func main() {
 						return
 					}
 					fmt.Printf("Socket Received a message: %s\n", string(data))
-					nc.IPublish("gtcontrol_"+strconv.Itoa(i), data)
+					nc.IPublish("gtcontrol_"+strconv.Itoa(client_index), data)
 				}
 			}()
 			_, err3 := nc.ISubscribe("gtlog_"+strconv.Itoa(i), func(m *nats.Msg) {
