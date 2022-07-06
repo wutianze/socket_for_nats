@@ -26,7 +26,8 @@ import (
 var host_port = flag.String("address", "8000", "listen on which port, connect to which port(debug)")
 var nats_address = flag.String("nats", "nats://39.101.140.145:4223", "address of nats server")
 var link_num = flag.Int("num", 3, "number of clients(for server) or index of the client(for client)")
-var debug = flag.Bool("debug", false, "run as a socket client")
+var as_socket_client = flag.Bool("as_socket_client", false, "run as a socket client")
+var debug = flag.Bool("debug", false, "debug mode")
 var name = flag.String("name", "", "who am I")
 
 func sendMsg(n *net.Conn, b *[]byte) {
@@ -46,7 +47,7 @@ func main() {
 	}()
 
 	flag.Parse()
-	if *debug {
+	if *as_socket_client {
 		test_conn, err_test := net.Dial("tcp", "127.0.0.1:"+*host_port)
 		if err_test != nil {
 			fmt.Println(err_test)
@@ -125,7 +126,9 @@ func main() {
 			go func() {
 				client_index := i
 				for {
-					//fmt.Println("start receive")
+					if *debug{
+						fmt.Println("start receive")
+					}
 					bufSize := make([]byte, 4)
 					_, err0 := io.ReadFull(socket_conn, bufSize)
 					if err0 != nil {
@@ -133,7 +136,9 @@ func main() {
 						return
 					}
 					bufSizeUint := binary.LittleEndian.Uint32(bufSize)
-					//fmt.Println("msg size is:",bufSizeUint)
+					if *debug{
+						fmt.Println("msg size is:",bufSizeUint)
+					}
 					data := make([]byte, bufSizeUint)
 					_, err1 := io.ReadFull(socket_conn, data)
 					if err1 != nil {
@@ -148,7 +153,9 @@ func main() {
 				}
 			}()
 			_, err3 := nc.ISubscribe("gtlog_"+strconv.Itoa(i), func(m *nats.Msg) {
-				//fmt.Printf("Nats Received a message: %s\n", string(m.Data))
+				if *debug{
+					fmt.Printf("Nats Received a message: %s\n", string(m.Data))
+				}
 				sendMsg(&socket_conn, &m.Data)
 			})
 			if err3 != nil {
@@ -178,7 +185,9 @@ func main() {
 		}
 		go func() {
 			for {
-				//fmt.Println("start receive")
+				if *debug{
+					fmt.Println("start receive")
+				}
 				bufSize := make([]byte, 4)
 				_, err0 := io.ReadFull(socket_conn, bufSize)
 				if err0 != nil {
@@ -186,7 +195,9 @@ func main() {
 					return
 				}
 				bufSizeUint := binary.LittleEndian.Uint32(bufSize)
-				//fmt.Println("msg size is:",bufSizeUint)
+				if *debug{
+					fmt.Println("msg size is:",bufSizeUint)
+				}
 				data := make([]byte, bufSizeUint)
 				_, err1 := io.ReadFull(socket_conn, data)
 				if err1 != nil {
@@ -196,12 +207,16 @@ func main() {
 				if string(data) == "exit" {
 					return
 				}
-				//fmt.Printf("Socket Received a message: %s\n", string(data))
+				if *debug{
+					fmt.Printf("Socket Received a message: %s\n", string(data))
+				}
 				nc.IPublish("gtlog_"+strconv.Itoa(*link_num), data)
 			}
 		}()
 		_, err3 := nc.ISubscribe("gtcontrol_"+strconv.Itoa(*link_num), func(m *nats.Msg) {
-			fmt.Printf("NATS Received a message: %s\n", string(m.Data))
+			if *debug{
+				fmt.Printf("NATS Received a message: %s\n", string(m.Data))
+			}
 			sendMsg(&socket_conn, &m.Data)
 		})
 		if err3 != nil {
