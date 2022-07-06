@@ -120,8 +120,7 @@ func main() {
 				continue
 			}
 			fmt.Println("socket connected")
-			go func() {
-				client_index := i
+			go func(client_index int) {
 				for {
 					if *debug{
 						fmt.Println("start receive")
@@ -150,7 +149,7 @@ func main() {
 					}
 					nc.IPublish("gtcontrol_"+strconv.Itoa(client_index), data)
 				}
-			}()
+			}(i)
 			if *debug{
 			fmt.Println("server listen on topic: gtlog_",strconv.Itoa(i))
 			}
