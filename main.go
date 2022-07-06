@@ -85,16 +85,7 @@ func main() {
 		return
 	}
 
-	tcpServer, err0 := net.ResolveTCPAddr("tcp4", *host_port)
-	if err0 != nil {
-		fmt.Println(err0)
-		return
-	}
-	listener, err1 := net.ListenTCP("tcp", tcpServer)
-	if err1 != nil {
-		fmt.Println(err1)
-		return
-	}
+	
 
 	nc, err2 := nats.IConnect(*nats_address)
 	defer nc.IClose()
@@ -106,7 +97,17 @@ func main() {
 	switch {
 	case *name == "server":
 		for i := 0; i < *link_num; i++ {
-
+			
+			tcpServer, err0 := net.ResolveTCPAddr("tcp4", ":"+strconv.Itoa(8000+i))
+	if err0 != nil {
+		fmt.Println(err0)
+		return
+	}
+	listener, err1 := net.ListenTCP("tcp", tcpServer)
+	if err1 != nil {
+		fmt.Println(err1)
+		return
+	}
 			socket_conn, err2 := listener.Accept()
 			defer socket_conn.Close()
 			if err2 != nil {
@@ -148,6 +149,23 @@ func main() {
 
 	case *name == "client":
 		fmt.Println("client")
+		tcpServer, err0 := net.ResolveTCPAddr("tcp4", *host_port)
+	if err0 != nil {
+		fmt.Println(err0)
+		return
+	}
+	listener, err1 := net.ListenTCP("tcp", tcpServer)
+	if err1 != nil {
+		fmt.Println(err1)
+		return
+	}
+			socket_conn, err2 := listener.Accept()
+			defer socket_conn.Close()
+			if err2 != nil {
+				fmt.Println(err2)
+				i--
+				continue
+			}
 		socket_conn, err2 := listener.Accept()
 		defer socket_conn.Close()
 		if err2 != nil {
