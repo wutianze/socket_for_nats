@@ -128,6 +128,7 @@ func main() {
 						return
 					}
 					bufSizeUint := binary.BigEndian.Uint32(bufSize)
+					fmt.Println("msg size is:",bufSizeUint)
 					data := make([]byte, bufSizeUint)
 					_, err1 := io.ReadFull(socket_conn, data)
 					if err1 != nil {
@@ -170,6 +171,7 @@ func main() {
 		}
 		go func() {
 			for {
+				fmt.Println("start receive")
 				bufSize := make([]byte, 4)
 				_, err0 := io.ReadFull(socket_conn, bufSize)
 				if err0 != nil {
@@ -177,6 +179,7 @@ func main() {
 					return
 				}
 				bufSizeUint := binary.BigEndian.Uint32(bufSize)
+				fmt.Println("msg size is:",bufSizeUint)
 				data := make([]byte, bufSizeUint)
 				_, err1 := io.ReadFull(socket_conn, data)
 				if err1 != nil {
