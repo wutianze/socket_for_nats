@@ -150,7 +150,7 @@ func main() {
 					if string(data) == "exit" {
 						return
 					}
-					if *debug{{
+					if *debug{
 						fmt.Printf("Socket Received a message: %s\n", string(data))
 					}
 					nc.IPublish("gtcontrol_"+strconv.Itoa(client_index), data)
