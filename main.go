@@ -74,15 +74,17 @@ func main() {
 				fmt.Println("socket client recv:" + string(data))
 			}
 		}()
+		time.Sleep(time.Duration(4) * time.Second)
 		var to_send []byte = []byte("ff")
 		sendMsg(&test_conn, &to_send)
 		time.Sleep(time.Duration(1) * time.Second)
 		to_send = []byte("gg")
 		sendMsg(&test_conn, &to_send)
 		time.Sleep(time.Duration(1) * time.Second)
-		to_send = []byte("exit")
-		sendMsg(&test_conn, &to_send)
-		time.Sleep(time.Duration(3) * time.Second)
+		//to_send = []byte("exit")
+		//sendMsg(&test_conn, &to_send)
+		//time.Sleep(time.Duration(3) * time.Second)
+		for{}
 		return
 	}
 
