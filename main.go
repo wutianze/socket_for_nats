@@ -74,17 +74,12 @@ func main() {
 				fmt.Println("socket client recv:" + string(data))
 			}
 		}()
-		time.Sleep(time.Duration(4) * time.Second)
+		for {
 		var to_send []byte = []byte("ff")
+			fmt.Println("socket client send ff")
 		sendMsg(&test_conn, &to_send)
 		time.Sleep(time.Duration(1) * time.Second)
-		to_send = []byte("gg")
-		sendMsg(&test_conn, &to_send)
-		time.Sleep(time.Duration(1) * time.Second)
-		//to_send = []byte("exit")
-		//sendMsg(&test_conn, &to_send)
-		//time.Sleep(time.Duration(3) * time.Second)
-		for{}
+		}
 		return
 	}
 
@@ -151,11 +146,14 @@ func main() {
 						return
 					}
 					if *debug{
-						fmt.Printf("Socket Received a message: %s\n", string(data))
+						fmt.Printf("Socket Received a message: %s, will publish on topic: %s\n", string(data),"gtcontrol_"+strconv.Itoa(client_index))
 					}
 					nc.IPublish("gtcontrol_"+strconv.Itoa(client_index), data)
 				}
 			}()
+			if *debug{
+			fmt.Println("server listen on topic: gtlog_",strconv.Itoa(i))
+			}
 			_, err3 := nc.ISubscribe("gtlog_"+strconv.Itoa(i), func(m *nats.Msg) {
 				if *debug{
 					fmt.Printf("Nats Received a message: %s\n", string(m.Data))
@@ -212,11 +210,14 @@ func main() {
 					return
 				}
 				if *debug{
-					fmt.Printf("Socket Received a message: %s\n", string(data))
+					fmt.Printf("Socket Received a message: %s, will publish on topic: %s\n", string(data),"gtlog_"+strconv.Itoa(*link_num))
 				}
 				nc.IPublish("gtlog_"+strconv.Itoa(*link_num), data)
 			}
 		}()
+		if *debug{
+			fmt.Println("server listen on topic: gtlog_",strconv.Itoa(*link_num))
+			}
 		_, err3 := nc.ISubscribe("gtcontrol_"+strconv.Itoa(*link_num), func(m *nats.Msg) {
 			if *debug{
 				fmt.Printf("NATS Received a message: %s\n", string(m.Data))
