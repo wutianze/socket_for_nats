@@ -96,6 +96,7 @@ func main() {
 
 	switch {
 	case *name == "server":
+		fmt.Println("server")
 		for i := 0; i < *link_num; i++ {
 			
 			tcpServer, err0 := net.ResolveTCPAddr("tcp4", ":"+strconv.Itoa(8000+i))
@@ -115,9 +116,11 @@ func main() {
 				i--
 				continue
 			}
+			fmt.Println("socket connected")
 			go func() {
 				client_index := i
 				for {
+					fmt.Println("start receive")
 					bufSize := make([]byte, 4)
 					_, err0 := io.ReadFull(socket_conn, bufSize)
 					if err0 != nil {
