@@ -159,13 +159,6 @@ func main() {
 		fmt.Println(err1)
 		return
 	}
-			socket_conn, err2 := listener.Accept()
-			defer socket_conn.Close()
-			if err2 != nil {
-				fmt.Println(err2)
-				i--
-				continue
-			}
 		socket_conn, err2 := listener.Accept()
 		defer socket_conn.Close()
 		if err2 != nil {
