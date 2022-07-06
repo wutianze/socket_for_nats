@@ -149,9 +149,9 @@ func main() {
 			if err3 != nil {
 				fmt.Println(err3)
 			}
-			for {
-	}
 		}
+		for {
+	}
 
 	case *name == "client":
 		fmt.Println("client")
