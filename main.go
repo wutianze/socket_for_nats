@@ -2,8 +2,8 @@
 * @Description:
 * @Author: Sauron
 * @Date: 2022-06-25 17:05:20
- * @LastEditTime: 2022-06-26 21:30:31
- * @LastEditors: Sauron
+* @LastEditTime: 2022-06-26 21:30:31
+* @LastEditors: Sauron
 */
 package main
 
@@ -23,7 +23,7 @@ import (
 	"github.com/wutianze/nats.go"
 )
 
-var host_port = flag.String("address", ":8000", "listen address, connect address(debug)")
+var host_port = flag.String("socket port", "8000", "listen on which port, connect to which port(debug)")
 var nats_address = flag.String("nats", "nats://39.101.140.145:4223", "address of nats server")
 var link_num = flag.Int("num", 3, "number of clients(for server) or index of the client(for client)")
 var debug = flag.Bool("debug", false, "run as a socket client")
@@ -47,7 +47,7 @@ func main() {
 
 	flag.Parse()
 	if *debug {
-		test_conn, err_test := net.Dial("tcp", *host_port)
+		test_conn, err_test := net.Dial("tcp", "127.0.0.1:"+*host_port)
 		if err_test != nil {
 			fmt.Println(err_test)
 			return
@@ -85,7 +85,11 @@ func main() {
 		return
 	}
 
-	
+	portInt,errArg := strconv.Atoi(*host_port)
+	if errArg != nil {
+		fmt.Println(errArg)
+		return
+	}
 
 	nc, err2 := nats.IConnect(*nats_address)
 	defer nc.IClose()
@@ -97,18 +101,19 @@ func main() {
 	switch {
 	case *name == "server":
 		fmt.Println("server")
+
 		for i := 0; i < *link_num; i++ {
-			
-			tcpServer, err0 := net.ResolveTCPAddr("tcp4", ":"+strconv.Itoa(8000+i))
-	if err0 != nil {
-		fmt.Println(err0)
-		return
-	}
-	listener, err1 := net.ListenTCP("tcp", tcpServer)
-	if err1 != nil {
-		fmt.Println(err1)
-		return
-	}
+
+			tcpServer, err0 := net.ResolveTCPAddr("tcp4", ":"+strconv.Itoa(portInt+i))
+			if err0 != nil {
+				fmt.Println(err0)
+				return
+			}
+			listener, err1 := net.ListenTCP("tcp", tcpServer)
+			if err1 != nil {
+				fmt.Println(err1)
+				return
+			}
 			socket_conn, err2 := listener.Accept()
 			defer socket_conn.Close()
 			if err2 != nil {
@@ -120,7 +125,7 @@ func main() {
 			go func() {
 				client_index := i
 				for {
-					fmt.Println("start receive")
+					//fmt.Println("start receive")
 					bufSize := make([]byte, 4)
 					_, err0 := io.ReadFull(socket_conn, bufSize)
 					if err0 != nil {
@@ -128,7 +133,7 @@ func main() {
 						return
 					}
 					bufSizeUint := binary.LittleEndian.Uint32(bufSize)
-					fmt.Println("msg size is:",bufSizeUint)
+					//fmt.Println("msg size is:",bufSizeUint)
 					data := make([]byte, bufSizeUint)
 					_, err1 := io.ReadFull(socket_conn, data)
 					if err1 != nil {
@@ -138,12 +143,12 @@ func main() {
 					if string(data) == "exit" {
 						return
 					}
-					fmt.Printf("Socket Received a message: %s\n", string(data))
+					//fmt.Printf("Socket Received a message: %s\n", string(data))
 					nc.IPublish("gtcontrol_"+strconv.Itoa(client_index), data)
 				}
 			}()
 			_, err3 := nc.ISubscribe("gtlog_"+strconv.Itoa(i), func(m *nats.Msg) {
-				fmt.Printf("Nats Received a message: %s\n", string(m.Data))
+				//fmt.Printf("Nats Received a message: %s\n", string(m.Data))
 				sendMsg(&socket_conn, &m.Data)
 			})
 			if err3 != nil {
@@ -151,20 +156,20 @@ func main() {
 			}
 		}
 		for {
-	}
+		}
 
 	case *name == "client":
 		fmt.Println("client")
-		tcpServer, err0 := net.ResolveTCPAddr("tcp4", *host_port)
-	if err0 != nil {
-		fmt.Println(err0)
-		return
-	}
-	listener, err1 := net.ListenTCP("tcp", tcpServer)
-	if err1 != nil {
-		fmt.Println(err1)
-		return
-	}
+		tcpServer, err0 := net.ResolveTCPAddr("tcp4", ":"+*host_port)
+		if err0 != nil {
+			fmt.Println(err0)
+			return
+		}
+		listener, err1 := net.ListenTCP("tcp", tcpServer)
+		if err1 != nil {
+			fmt.Println(err1)
+			return
+		}
 		socket_conn, err2 := listener.Accept()
 		defer socket_conn.Close()
 		if err2 != nil {
@@ -173,7 +178,7 @@ func main() {
 		}
 		go func() {
 			for {
-				fmt.Println("start receive")
+				//fmt.Println("start receive")
 				bufSize := make([]byte, 4)
 				_, err0 := io.ReadFull(socket_conn, bufSize)
 				if err0 != nil {
@@ -181,7 +186,7 @@ func main() {
 					return
 				}
 				bufSizeUint := binary.LittleEndian.Uint32(bufSize)
-				fmt.Println("msg size is:",bufSizeUint)
+				//fmt.Println("msg size is:",bufSizeUint)
 				data := make([]byte, bufSizeUint)
 				_, err1 := io.ReadFull(socket_conn, data)
 				if err1 != nil {
@@ -191,7 +196,7 @@ func main() {
 				if string(data) == "exit" {
 					return
 				}
-				fmt.Printf("Socket Received a message: %s\n", string(data))
+				//fmt.Printf("Socket Received a message: %s\n", string(data))
 				nc.IPublish("gtlog_"+strconv.Itoa(*link_num), data)
 			}
 		}()
@@ -203,7 +208,7 @@ func main() {
 			fmt.Println(err3)
 		}
 		for {
-	}
+		}
 	}
 }
 

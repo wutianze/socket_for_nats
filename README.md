@@ -10,8 +10,8 @@
 ## 容器
 除了上面的直接部署，也可选择容器部署，amd64镜像：sauronwu/socket_nats_amd64。容器运行示例`sudo docker run -p 8000:8000 -dw /home/socket_for_nats/ sauronwu/socket_nats_amd64:v0.1 git pull && go run . --name="server" --num=1`（一般情况下可以不用git pull）
 # 参数指定
-`--address="127.0.0.1:8000"`，socket的监听地址，默认为":8000"  
-`--nats="nats://39.101.140.145:4222"`，nats服务器地址，默认为我们部署在阿里云上的地址，如果只能访问南京内网，则使用192.168.103.4:4222。  
+`--address="8000"`，socket的监听端口，默认为"8000"  
+`--nats="nats://39.101.140.145:4223"`，nats服务器地址，默认为我们部署在阿里云上的地址，如果只能访问南京内网，则使用192.168.103.4:4222。  
 `-num=3`，对于综合管控侧，该参数指定有多少个接入的部门，对于各部门（接入网、智能网、高通量），该参数指定自己的序号。例：总控接入高通量、接入网两个部门，总控侧num=2，高通量指定num=0，接入网指定num=1(具体需要需要提前商量好)。  
 `--name="server"`，指定自己是综合管控侧（name="server"）还是各部门（name="client"）  
 `--debug=true`，默认为false，该选项用于开发者调试，为true时本次运行会作为一个socket client尝试连接address指定的socket sever，会等待来自socket server的消息，并发送几条消息给socket server。  
@@ -21,7 +21,7 @@
 ## 接入网、智能网、高通量
 `go run . --name="client" --num=0`
 ## 开发者debug
-`go run . --debug=true --address="127.0.0.1:8000"`
+`go run . --debug=true --address="8000"`
 # 连接逻辑解析
 ## 接入网、智能网、高通量
 接入部门作为socket client连接本项目，上报给总控的消息用socket发给本项目，本项目再转发给总线。总控下达的控制指令由总线发送到本项目，再由本项目通过socket发给接入部门的socket client。
