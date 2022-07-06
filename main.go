@@ -24,7 +24,7 @@ import (
 )
 
 var host_port = flag.String("address", ":8000", "listen address, connect address(debug)")
-var nats_address = flag.String("nats", "nats://39.101.140.145:4222", "address of nats server")
+var nats_address = flag.String("nats", "nats://39.101.140.145:4223", "address of nats server")
 var link_num = flag.Int("num", 3, "number of clients(for server) or index of the client(for client)")
 var debug = flag.Bool("debug", false, "run as a socket client")
 var name = flag.String("name", "", "who am I")
