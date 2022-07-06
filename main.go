@@ -149,6 +149,8 @@ func main() {
 			if err3 != nil {
 				fmt.Println(err3)
 			}
+			for {
+	}
 		}
 
 	case *name == "client":
@@ -200,10 +202,9 @@ func main() {
 		if err3 != nil {
 			fmt.Println(err3)
 		}
+		for {
 	}
-	for {
 	}
-
 }
 
 //nc.IPublish("gt_log",[]byte("what"))
