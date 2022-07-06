@@ -31,7 +31,7 @@ var name = flag.String("name", "", "who am I")
 
 func sendMsg(n *net.Conn, b *[]byte) {
 	var dataLen []byte = make([]byte, 4)
-	binary.BigEndian.PutUint32(dataLen, uint32(len(*b)))
+	binary.LittleEndian.PutUint32(dataLen, uint32(len(*b)))
 	(*n).Write(dataLen)
 	(*n).Write(*b)
 }
@@ -60,7 +60,7 @@ func main() {
 					fmt.Println(err0)
 					return
 				}
-				bufSizeUint := binary.BigEndian.Uint32(bufSize)
+				bufSizeUint := binary.LittleEndian.Uint32(bufSize)
 				data := make([]byte, bufSizeUint)
 				_, err1 := io.ReadFull(test_conn, data)
 				if err1 != nil {
@@ -127,7 +127,7 @@ func main() {
 						fmt.Println(err0)
 						return
 					}
-					bufSizeUint := binary.BigEndian.Uint32(bufSize)
+					bufSizeUint := binary.LittleEndian.Uint32(bufSize)
 					fmt.Println("msg size is:",bufSizeUint)
 					data := make([]byte, bufSizeUint)
 					_, err1 := io.ReadFull(socket_conn, data)
@@ -178,7 +178,7 @@ func main() {
 					fmt.Println(err0)
 					return
 				}
-				bufSizeUint := binary.BigEndian.Uint32(bufSize)
+				bufSizeUint := binary.LittleEndian.Uint32(bufSize)
 				fmt.Println("msg size is:",bufSizeUint)
 				data := make([]byte, bufSizeUint)
 				_, err1 := io.ReadFull(socket_conn, data)
